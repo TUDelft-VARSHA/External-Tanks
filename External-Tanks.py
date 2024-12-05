@@ -123,6 +123,7 @@ class ParabolicTankPlotter:
         ax_front.set_ylabel('Height (Z)')
         ax_front.set_title('Front View (Tops Aligned)')
         ax_front.legend()
+
         plt.grid(True)
         plt.tight_layout()
         plt.show()
