@@ -48,12 +48,9 @@ class External:
         self.calculate_x()  # Ensure x is calculated
         pressure = rho_w * g * (self.height - self.y) + (p_atm - p_min)
         radius = (1 + (2 * self.height / self.halfwidth**2 * self.x)**2)**(3/2) * self.halfwidth**2 / (2 * self.height)
-        # print(radius)
         product = pressure * radius
         max_loc = max(product)
-        print("max_loc", max_loc, "sigma", self.sigma)
         self.t = max_loc / (self.sigma / safetyfactor) 
-        print("thickness", self.t)
         return self.t
 
     def calculate_arclength(self):
@@ -92,8 +89,8 @@ for mat, data in materials_data.items():
         externaltank.price = data["price_usdkg"] * externaltank.mass
         externaltanks.append(externaltank)
 
-table_externaltanks = [[tank.name, tank.t, tank.mat, tank.mass, tank.price] for tank in externaltanks]
-headers_externaltanks = ["Tank name", "thickness", "Material", 'Mass', 'Price']
+table_externaltanks = [[tank.name, tank.mat, (tank.t)*1000, tank.mass, tank.price] for tank in externaltanks]
+headers_externaltanks = ["Tank name", "Material", "Thickness [mm]", 'Mass [kg]', 'Price [$]']
 print(tabulate(table_externaltanks, headers=headers_externaltanks, tablefmt="grid"))
 
 # Initialize a dictionary to store the total mass and price for each material
@@ -112,5 +109,5 @@ for tank in externaltanks:
 
 # You can also format it into a table
 table_material_totals = [[material, totals["mass"], totals["price"]] for material, totals in material_totals.items()]
-headers_material_totals = ["Material", "Total Mass (kg)", "Total Price ($)"]
+headers_material_totals = ["Material", "Total Mass [kg]", "Total Price [$]"]
 print(tabulate(table_material_totals, headers=headers_material_totals, tablefmt="grid"))
