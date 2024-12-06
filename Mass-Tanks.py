@@ -13,6 +13,7 @@ g = 9.81
 thick_array = []
 arc_array = []
 mass_array = []
+frontal_array = []
 
 for i in range(3):
     y = np.arange(0,height[i]+0.01,0.01)
@@ -46,7 +47,11 @@ for i in range(3):
     mass_array.append(mass)
 
     
+    def parabola(x):
+        return height[i]/half_width[i]**2 * x**2
+
+    frontal_area = height[i] * 2*half_width[i] - quad(parabola,a,b)[0]
+    frontal_array.append(frontal_area)
 
 
-
-print(thick_array, arc_array, mass_array)
+print(thick_array, arc_array, mass_array, frontal_array)
