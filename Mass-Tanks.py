@@ -50,7 +50,7 @@ class External:
         radius = (1 + (2 * self.height / self.halfwidth**2 * self.x)**2)**(3/2) * self.halfwidth**2 / (2 * self.height)
         product = pressure * radius
         max_loc = max(product)
-        self.t = max_loc / (self.sigma / safetyfactor) 
+        self.t = max_loc / (self.sigma / safetyfactor_p) 
         return self.t
 
     def calculate_arclength(self):
@@ -93,10 +93,8 @@ table_externaltanks = [[tank.name, tank.mat, (tank.t)*1000, tank.mass, tank.pric
 headers_externaltanks = ["Tank name", "Material", "Thickness [mm]", 'Mass [kg]', 'Price [$]']
 print(tabulate(table_externaltanks, headers=headers_externaltanks, tablefmt="grid"))
 
-# Initialize a dictionary to store the total mass and price for each material
 material_totals = {}
 
-# Iterate through each external tank and accumulate the mass and price by material
 for tank in externaltanks:
     material = tank.mat
     # If the material is already in the dictionary, update the totals
@@ -107,7 +105,6 @@ for tank in externaltanks:
         # If the material is not in the dictionary, initialize it
         material_totals[material] = {"mass": tank.mass, "price": tank.price}
 
-# You can also format it into a table
 table_material_totals = [[material, totals["mass"], totals["price"]] for material, totals in material_totals.items()]
 headers_material_totals = ["Material", "Total Mass [kg]", "Total Price [$]"]
 print(tabulate(table_material_totals, headers=headers_material_totals, tablefmt="grid"))

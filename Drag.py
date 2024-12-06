@@ -41,12 +41,12 @@ class Drag:
         self.rho = rho
 
     def dragcalculation(self):
-        self.drag = 0.5 * self.rho * self.velocity**2 * self.area * self.cd
+        self.drag = 0.5 * self.rho * self.velocity**2 * self.area * self.cd * safetyfactor_drag
         return self.drag
     
 
 # Replace with actual values
-dragcalc = Drag(area_total, Cd, V_cruise, rho_cruise)
+dragcalc = Drag(area_total, Cd, 56.5, 1.225)
 drag_force = dragcalc.dragcalculation()
 
 print(f"Drag force: {drag_force}")
