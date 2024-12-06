@@ -29,7 +29,8 @@ class External:
         """Calculate x based on the tank's geometry."""
         self.y = np.arange(0, self.height + 0.01, 0.01)  # Array of y values
         self.x = np.sqrt(self.halfwidth**2 / self.height * self.y)  # Calculate x for each y value
-
+        return
+    
     def dydx(self, x):
         """Calculate dydx based on the geometry."""
         return 2 * self.height / self.halfwidth**2 * x
@@ -47,9 +48,12 @@ class External:
         self.calculate_x()  # Ensure x is calculated
         pressure = rho_w * g * (self.height - self.y) + (p_atm - p_min)
         radius = (1 + (2 * self.height / self.halfwidth**2 * self.x)**2)**(3/2) * self.halfwidth**2 / (2 * self.height)
+        # print(radius)
         product = pressure * radius
         max_loc = max(product)
+        print("max_loc", max_loc, "sigma", self.sigma)
         self.t = max_loc / (self.sigma / safetyfactor) 
+        print("thickness", self.t)
         return self.t
 
     def calculate_arclength(self):
@@ -70,7 +74,7 @@ class External:
         """Calculate the volume."""
         self.calculate_arclength()  # Ensure arc length is calculated
         self.calculate_frontalarea()  # Ensure frontal area is calculated
-        self.volumemat = self.frontal_area * self.arc_length + self.frontal_area * 2
+        self.volumemat = self.t * (self.arc_length * self.length + self.frontal_area * 2)
         return self.volumemat
 
 # Example of running the loop
@@ -78,7 +82,7 @@ externaltanks = list()
 
 for mat, data in materials_data.items():
     for h, w, l, n in zip(height, half_width, length, name):
-        externaltank = External(height=h, halfwidth=w, length=l, sigma=data["density_kgm3"], name =n)
+        externaltank = External(height=h, halfwidth=w, length=l, sigma=data["yield_pa"], name=n)
         externaltank.calculatethickness()
         externaltank.calculate_arclength()
         externaltank.calculate_frontalarea()
@@ -88,8 +92,8 @@ for mat, data in materials_data.items():
         externaltank.price = data["price_usdkg"] * externaltank.mass
         externaltanks.append(externaltank)
 
-table_externaltanks = [[tank.name, tank.mat, tank.mass, tank.price] for tank in externaltanks]
-headers_externaltanks = ["Tank name", "Material", 'Mass', 'Price']
+table_externaltanks = [[tank.name, tank.t, tank.mat, tank.mass, tank.price] for tank in externaltanks]
+headers_externaltanks = ["Tank name", "thickness", "Material", 'Mass', 'Price']
 print(tabulate(table_externaltanks, headers=headers_externaltanks, tablefmt="grid"))
 
 # Initialize a dictionary to store the total mass and price for each material
