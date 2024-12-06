@@ -3,6 +3,7 @@ from scipy.integrate import quad
 from math import *
 
 rho = 7850 #kg/m^3 for low steel alloy
+yield_stress = 950E6
 
 height = [1.6, 1.2, 1.2]
 half_width = [3/2, 5.26/2, 2.75/2]
@@ -14,6 +15,7 @@ thick_array = []
 arc_array = []
 mass_array = []
 frontal_array = []
+volume_array = []
 
 for i in range(3):
     y = np.arange(0,height[i]+0.01,0.01)
@@ -26,7 +28,7 @@ for i in range(3):
     product = pressure*radius
     max_loc = max(product)
 
-    thickness = max_loc / (950E6/4) * 1000
+    thickness = max_loc / (yield_stress/4) * 1000
     thick_array.append(thickness)
 
 
@@ -43,15 +45,20 @@ for i in range(3):
     arc_array.append(arc_length)
 
 
-    mass = arc_length * thickness/1000 * length[i] * rho
-    mass_array.append(mass)
-
-    
     def parabola(x):
         return height[i]/half_width[i]**2 * x**2
 
     frontal_area = height[i] * 2*half_width[i] - quad(parabola,a,b)[0]
     frontal_array.append(frontal_area)
 
+    volume = frontal_area * length[i]
+    volume_array.append(volume)
 
-print(thick_array, arc_array, mass_array, frontal_array)
+    mass = (arc_length * thickness/1000 * length[i] + frontal_area*thickness/1000*2) * rho
+    mass_array.append(mass)
+
+    
+    
+
+
+print(volume_array, sum(volume_array))
