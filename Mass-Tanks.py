@@ -45,11 +45,11 @@ class External:
     def calculatethickness(self):
         """Calculate material thickness."""
         self.calculate_x()  # Ensure x is calculated
-        pressure = 1000 * g * (self.height - self.y) + 1E5 - 16236
+        pressure = rho_w * g * (self.height - self.y) + (p_atm - p_min)
         radius = (1 + (2 * self.height / self.halfwidth**2 * self.x)**2)**(3/2) * self.halfwidth**2 / (2 * self.height)
         product = pressure * radius
         max_loc = max(product)
-        self.t = max_loc / (self.sigma / 4) * 1000  # Convert thickness to mm
+        self.t = max_loc / (self.sigma / safetyfactor) 
         return self.t
 
     def calculate_arclength(self):
