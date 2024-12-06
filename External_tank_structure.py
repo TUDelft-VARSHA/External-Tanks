@@ -50,13 +50,14 @@ import numpy as np
 
 def hoop_stress_calculation(
     tank_weight,  # in Newtons (N)
-    drag_force,  # in Newtons (N)
-    acceleration,  # in m/s^2
     hoop_radius,  # in meters (m)
     hoop_thickness,  # in meters (m)
     material_yield_strength,  # in Pascals (Pa)
-    safety_factor  # dimensionless
-):
+    safety_factor, # dimensionless
+    pressure_difference, # Pa
+    hoop_ix,
+    hoop_Q
+    ):
     """
     Calculate the stresses on a fuselage hoop due to an external tank.
     """
@@ -67,54 +68,65 @@ def hoop_stress_calculation(
     # Total load on the hoop (static and dynamic)
     total_load = tank_weight 
 
-    # Axial stress on the hoop
-    axial_stress = total_load / hoop_area
+    # Hoop stress
+    hoop_stress = (pressure_difference * hoop_radius)/hoop_thickness
 
     # Longitudinal stress on the hoop
-    longitudinal_stress = (total_load * hoop_radius)/ hoop_thickness
+    longitudinal_stress = (pressure_difference* hoop_radius)/ (2* hoop_thickness)
+
+    # Shear stress 
+    shear_stress = sqrt((material_yield_strength**2)/4 - ((hoop_stress+longitudinal_stress)/2)**2)
+
+    # Shear force
+    shear_force = (hoop_ix * hoop_thickness * shear_stress)/hoop_Q
 
     # Maximum allowable stress
     allowable_stress = material_yield_strength / safety_factor
 
     # Safety check
-    is_safe = axial_stress <= allowable_stress
+    is_safe = shear_force >= total_load
 
     # Print results
     print("=== Hoop Stress Calculation ===")
     print(f"Total Load: {total_load:.2f} N")
     print(f"Hoop Cross-sectional Area: {hoop_area:.6f} m^2")
-    print(f"Axial Stress: {axial_stress:.2f} Pa")
+    print(f"Hoop stress: {hoop_stress:.2f} Pa")
     print(f"Longitudinal Stress: {longitudinal_stress:.2f} Pa")
     print(f"Allowable Stress (with FoS): {allowable_stress:.2f} Pa")
     print(f"Is the design safe? {'Yes' if is_safe else 'No'}")
+    print(f"shear force: {shear_force:.2f} N")
     
 
     return {
         "total_load": total_load,
-        "axial_stress": axial_stress,
+        "hoop_stress": hoop_stress,
         "allowable_stress": allowable_stress,
         "is_safe": is_safe
     }
 
 
-# Example: Modify these values for your scenario
-tank_weight = 1079100  # N (approximately 110 ton)
-drag_force = 5000  # N
-acceleration = 2.5  # m/s^2 (e.g., during turbulence or maneuver)
+safety_factor = 2.0  # dimensionless
+tank_weight = 2000*9.81  # N (approximately largest mass per unit length)
 hoop_radius = 3.57 # m
 hoop_thickness = 0.02  # m
-material_yield_strength = 450e6  # Pa (e.g., Aluminum 7075)
-safety_factor = 2.0  # dimensionless
+material_yield_strength = 450e6/safety_factor  # Pa (e.g., 2024-T432)
+hoop_ix = 1/8 * np.pi * hoop_thickness * (2*hoop_radius-hoop_thickness)**3
+hoop_Q = ((4*hoop_radius)/3)*(hoop_radius-(1/2)*hoop_thickness)*hoop_thickness
+pressure_difference = 55932 # Pa
+
+
 
 # Run the calculation
 results = hoop_stress_calculation(
     tank_weight,
-    drag_force,
-    acceleration,
     hoop_radius,
     hoop_thickness,
     material_yield_strength,
-    safety_factor
+    safety_factor,
+    hoop_Q,
+    hoop_ix,
+    pressure_difference
+    
 )
 
 
