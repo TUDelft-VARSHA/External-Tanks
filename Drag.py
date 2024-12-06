@@ -41,7 +41,7 @@ class Drag:
         self.rho = rho
 
     def dragcalculation(self):
-        self.drag = 0.5 * self.rho * self.velocity**2 * self.area * self.cd
+        self.drag = 0.5 * self.rho * self.velocity**2 * self.area * self.cd * safetyfactor_drag
         return self.drag
     
 
