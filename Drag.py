@@ -46,7 +46,7 @@ class Drag:
     
 
 # Replace with actual values
-dragcalc = Drag(area_total, Cd, 56.5, 1.225)
+dragcalc = Drag(area_total, Cd, V_cruise, rho_cruise)
 drag_force = dragcalc.dragcalculation()
 
 print(f"Drag force: {drag_force}")
