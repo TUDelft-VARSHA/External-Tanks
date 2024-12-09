@@ -25,6 +25,7 @@ class External:
         self.arc_length = None
         self.t = None
         self.name = name
+        self.volume = None
 
     def calculate_x(self):
         """Calculate x based on the tank's geometry."""
@@ -72,7 +73,11 @@ class External:
         """Calculate the volume."""
         self.calculate_arclength()  # Ensure arc length is calculated
         self.calculate_frontalarea()  # Ensure frontal area is calculated
+        product = self.arc_length * self.length + self.frontal_area * 2
+        print(product)
         self.volumemat = self.t * (self.arc_length * self.length + self.frontal_area * 2)
+        self.volume = self.length * self.frontal_area
+        
         return self.volumemat
 
 # Example of running the loop
@@ -90,8 +95,8 @@ for mat, data in materials_data.items():
         externaltank.price = data["price_usdkg"] * externaltank.mass
         externaltanks.append(externaltank)
 
-table_externaltanks = [[tank.name, tank.mat, (tank.t)*1000, tank.mass, tank.price] for tank in externaltanks]
-headers_externaltanks = ["Tank name", "Material", "Thickness [mm]", 'Mass [kg]', 'Price [$]']
+table_externaltanks = [[tank.name, tank.mat, (tank.t)*1000, tank.mass, tank.price, tank.volume] for tank in externaltanks]
+headers_externaltanks = ["Tank name", "Material", "Thickness [mm]", 'Mass [kg]', 'Price [$]', 'Volume [m3]']	
 print(tabulate(table_externaltanks, headers=headers_externaltanks, tablefmt="grid"))
 
 material_totals = {}
