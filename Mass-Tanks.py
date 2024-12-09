@@ -3,6 +3,7 @@ from scipy.integrate import quad
 from math import *
 from Constants import * 
 from tabulate import tabulate
+from Drag import area_total, drag_force
 
 thick_array = []
 arc_array = []
