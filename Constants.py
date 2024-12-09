@@ -11,7 +11,7 @@ safetyfactor_p = 4
 safetyfactor_drag = 1.5                                 #   [-]         to add for influence on other system due to external tanks
 mu = 1.3789e-5                                          #   [Ns/m2]     viscosity
 IF = 1.1                                                #   [-]         interference factor
-area_wet = 2878                                         #   [m2]        wetted area
+area_wet = 169.32                                       #   [m2]        wetted area of external tanks (gotten from mass-tanks.py)
 k = 1e-7                                                #   [-]         surface parameter
 cd0_ac = 0.0157 # 0.01523
 
