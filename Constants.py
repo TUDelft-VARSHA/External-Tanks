@@ -1,13 +1,20 @@
 Cd = 0.9                                                #   [-]         drag coefficient estimation https://aerospaceweb.org/question/aerodynamics/q0231.shtml
 V_cruise = 900 / 3.6                                    #   [m/s]       cruise speed
-rho_cruise = 0.331985                                   #   [kg/m3]     cruise density 
+rho_cruise = 0.331985                                   #   [kg/m3]     cruise density
+M_cruise = 0.85                                         #   [-]         Mach number during cruise 
 V_TO = 90                                               #   [m/s]       take off speed
 rho_atm = 1.224                                         #   [kg/m3]     take off density
 rho_w = 1000                                            #   [kg/m3]     density of water
 p_atm = 101325
 p_min = 16236
 safetyfactor_p = 4
-safetyfactor_drag = 1.5                                   #   [-]         to add for influence on other system due to external tanks
+safetyfactor_drag = 1.5                                 #   [-]         to add for influence on other system due to external tanks
+mu = 1.3789e-5                                          #   [Ns/m2]     viscosity
+IF = 1.1                                                #   [-]         interference factor
+area_wet = 2878                                         #   [m2]        wetted area
+k = 1e-7                                                #   [-]         surface parameter
+cd0_ac = 0.0157 # 0.01523
+
 
 g = 9.81
 name = ['Tank 1', 'Tank 2', 'Tank 3']
