@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import *
+from scipy.optimize import curve_fit
 
 #Part 1: Constants
 p0 = 101325
@@ -26,26 +27,25 @@ l_wing = 17.7 #m
 rho_water = 1000
 
 
-#Part 2: Cross-section properties
-I_xx = 1/8 * np.pi * t * (2*r-t)**3
-Q_xx = 4/3 * r * (r-1/2*t)*t
-
-#Part 3: Pressure stresses
-delta_p = p0 - p_atm
-sigma_hoop = delta_p * (r - 1/2 * t)
-sigma_long = 1/2 * sigma_hoop
-
-
-#Part 4: Shear/Moment diagrams
-
-'''Distributed weights'''
-w_fus = m_fus * g / l_fus 
-w_1 = (m_tank1 + V_tank1 * rho_water) * g / l_tank1 
-w_2 = (m_tank2 + V_tank2 * rho_water) * g  / l_tank2 
-w_3 = (m_tank3 + V_tank3 * rho_water) * g  / l_tank3
-
-
 def calculations(tanks):
+    #Part 2: Cross-section properties
+    I_xx = 1/8 * np.pi * t * (2*r-t)**3
+    Q_xx = 4/3 * r * (r-1/2*t)*t
+
+    #Part 3: Pressure stresses
+    delta_p = p0 - p_atm
+    sigma_hoop = delta_p * (r - 1/2 * t)
+    sigma_long = 1/2 * sigma_hoop
+
+
+    #Part 4: Shear/Moment diagrams
+
+    '''Distributed weights'''
+    w_fus = m_fus * g / l_fus 
+    w_1 = (m_tank1 + V_tank1 * rho_water) * g / l_tank1 
+    w_2 = (m_tank2 + V_tank2 * rho_water) * g  / l_tank2 
+    w_3 = (m_tank3 + V_tank3 * rho_water) * g  / l_tank3
+
     if tanks: #Fuselage with tanks
         w_w = ((m_tank1 + m_tank2 + m_tank3) + (V_tank1 + V_tank2 + V_tank3) * rho_water) * g / l_wing + m_fus * g / l_wing
 
@@ -156,7 +156,26 @@ def calculations(tanks):
     return tau_max
 
 #Part 6: Empirical determination of new fuselage thickness
-new_t = t / (calculations(1)/calculations(0))**(-2.0111) #Empirical formula of t = 35571020500.0769 * design_tau^-2.0111
+def empirical():
+    sample_t = np.arange(0.01, 0.1*r+0.01, 0.01)  # sample thicknesses
+    sample_tau = []
+    for el in sample_t:
+        t = el
+        tau = calculations(0)
+        sample_tau.append(tau)
+
+    def model(tau, a, b):
+        return a * tau**b
+
+    params, _ = curve_fit(model, sample_tau, sample_t)
+    a, b = params
+    return b
+
+b = empirical()
+print(b)
+print(t)
+
+new_t = t / (calculations(1)/calculations(0))**(b) #Empirical formula of t = 35571020500.0769 * design_tau^-2.0111
 
 #Part 7: New thickness and consequences for weight
 extra_t = new_t - t
