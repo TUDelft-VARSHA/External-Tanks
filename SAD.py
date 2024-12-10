@@ -10,16 +10,17 @@ thick = 0.02 #longitudinal thickness
 r = 7.14/2 #outer radius of fuselage
 spacing_hoops = 0.5
 rho_hoops = 2780 #Titanium 
-m_tank1 = None
-V_tank1 = None
-l_tank1 = None
-m_tank2 = None
-V_tank2 = None
-l_tank2 = None
-m_tank3 =None
-V_tank3 = None
-l_tank3 = None
+m_tank1 = 415.517 + 237.92 + 65.79
+V_tank1 = 44.8
+l_tank1 = 14
+m_tank2 = 309.11 + 345.68 + 45.72
+V_tank2 = 42.08
+l_tank2 = 10
+m_tank3 = 127.367 + 32.86 + 17.25
+V_tank3 = 15.4
+l_tank3 = 7
 m_fus = 77000 #kg
+l_fus = 53.94
 g = 9.81
 l_wing = 17.7 #m
 rho_water = 1000
@@ -38,15 +39,15 @@ sigma_long = 1/2 * sigma_hoop
 #Part 4: Shear/Moment diagrams
 
 '''Distributed weights'''
-w_fus = 14004 # replace by formulas
-w_1 = 32673 # replace by formulas
-w_2 = 42614 # replace by formulas
-w_3 = 22367 # replace by formulas
+w_fus = m_fus * g / l_fus 
+w_1 = (m_tank1 + V_tank1 * rho_water) * g / l_tank1 
+w_2 = (m_tank2 + V_tank2 * rho_water) * g  / l_tank2 
+w_3 = (m_tank3 + V_tank3 * rho_water) * g  / l_tank3
 
 
 def calculations(tanks):
     if tanks: #Fuselage with tanks
-        w_w = 101441
+        w_w = ((m_tank1 + m_tank2 + m_tank3) + (V_tank1 + V_tank2 + V_tank3) * rho_water) * g / l_wing + m_fus * g / l_wing
 
         def function_1(w_fus=w_fus):
             return -w_fus 
@@ -67,7 +68,7 @@ def calculations(tanks):
             return (-w_fus - w_3)
         
     else: #Fuselage without tanks (normal)
-        w_w = 42676
+        w_w = (m_fus) * g / l_wing
         def function_1(w_fus=w_fus):
             return -w_fus 
 
@@ -160,7 +161,7 @@ new_t = t / (calculations(1)/calculations(0))**(-2.0111) #Empirical formula of t
 #Part 7: New thickness and consequences for weight
 extra_t = new_t - t
 extra_A = 2 * np.pi * (r - t - 1/2 * extra_t) * t
-n_hoops = 63 # (l_tank1 + l_tank2 + l_tank3) / spacing_hoops + 1
+n_hoops = (l_tank1 + l_tank2 + l_tank3) / spacing_hoops + 1
 extra_mass = extra_A * thick * n_hoops * rho_hoops
 
 print(extra_mass)
