@@ -11,7 +11,7 @@ thick = 0.02 #longitudinal thickness
 r = 7.14/2 #outer radius of fuselage
 spacing_hoops = 0.5
 rho_hoops = 2780 #Titanium 
-m_tank1 = 415.517 + 237.92 + 65.79
+m_tank1 = 415.517 + 237.92 + 65.79 #shell, baffles, , actuators
 V_tank1 = 44.8
 l_tank1 = 14
 m_tank2 = 309.11 + 345.68 + 45.72
@@ -20,14 +20,14 @@ l_tank2 = 10
 m_tank3 = 127.367 + 32.86 + 17.25
 V_tank3 = 15.4
 l_tank3 = 7
-m_fus = 77000 #kg
+m_fus = 100000 #kg
 l_fus = 53.94
 g = 9.81
 l_wing = 17.7 #m
 rho_water = 1000
 
 
-def calculations(tanks):
+def calculations(tanks, t=t):
     #Part 2: Cross-section properties
     I_xx = 1/8 * np.pi * t * (2*r-t)**3
     Q_xx = 4/3 * r * (r-1/2*t)*t
@@ -160,15 +160,14 @@ def empirical():
     sample_t = np.arange(0.01, 0.1*r+0.01, 0.01)  # sample thicknesses
     sample_tau = []
     for el in sample_t:
-        t = el
-        tau = calculations(0)
+        tau = calculations(0,el)
         sample_tau.append(tau)
-
     def model(tau, a, b):
-        return a * tau**b
+        return np.log(a) + b * np.log(tau)
 
     params, _ = curve_fit(model, sample_tau, sample_t)
     a, b = params
+    
     return b
 
 b = empirical()
