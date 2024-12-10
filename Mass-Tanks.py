@@ -22,7 +22,7 @@ for i in range(3):
     x = np.sqrt(half_width[i]**2 / height[i] * y)
 
 
-    pressure = 1000*g*(height[i]-y) + 1E5 - 16236
+    pressure = 1000*g*(height[i]-y) + 101325 - 16236
     radius = (1+ (2*height[i] / half_width[i]**2 * x)**2 )**(3/2) * half_width[i]**2/(2*height[i])
 
     product = pressure*radius
@@ -61,4 +61,5 @@ for i in range(3):
     
 
 
-print(volume_array, sum(volume_array))
+print( (np.array(mass_array) + np.array(volume_array)*1000) /np.array(length)*9.81)
+print( sum((np.array(mass_array) + np.array(volume_array)*1000))*9.81 + 77000*9.81)

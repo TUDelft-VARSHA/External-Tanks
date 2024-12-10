@@ -69,10 +69,10 @@ def hoop_stress_calculation(
     total_load = tank_weight 
 
     # Hoop stress
-    hoop_stress = (pressure_difference * hoop_radius)/hoop_thickness
+    hoop_stress = (pressure_difference * (hoop_radius-1/2*hoop_thickness))/hoop_thickness
 
     # Longitudinal stress on the hoop
-    longitudinal_stress = (pressure_difference* hoop_radius)/ (2* hoop_thickness)
+    longitudinal_stress = 1/2* hoop_stress
 
     # Shear stress 
     shear_stress = sqrt((material_yield_strength**2)/4 - ((hoop_stress+longitudinal_stress)/2)**2)
@@ -106,9 +106,9 @@ def hoop_stress_calculation(
 
 
 safety_factor = 2.0  # dimensionless
-tank_weight = 2000*9.81  # N (approximately largest mass per unit length)
+tank_weight = 473778  # N (approximately largest mass per unit length)
 hoop_radius = 3.57 # m
-hoop_thickness = 0.02  # m
+hoop_thickness = 0.3  # m
 material_yield_strength = 450e6/safety_factor  # Pa (e.g., 2024-T432)
 hoop_ix = 1/8 * np.pi * hoop_thickness * (2*hoop_radius-hoop_thickness)**3
 hoop_Q = ((4*hoop_radius)/3)*(hoop_radius-(1/2)*hoop_thickness)*hoop_thickness
